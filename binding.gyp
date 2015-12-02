@@ -5,7 +5,7 @@
       "sources": [
         "src/snprintf/snprintf.c",
         "src/pattern/51Degrees.c",
-        "src/pattern/api.cc",
+        "src/pattern/api.cc"
       ],
       "cflags": [
         "-Wno-trigraphs"
@@ -15,14 +15,14 @@
       ],
       "include_dirs" : [
         "<!(node -e \"require('nan')\")"
-      ],
+      ]
     },
     {
       "target_name": "trie",
       "sources": [
         "src/snprintf/snprintf.c",
         "src/trie/51Degrees.c",
-        "src/trie/api.cc",
+        "src/trie/api.cc"
       ],
       "cflags": [
         "-Wno-trigraphs"
@@ -32,7 +32,7 @@
       ],
       "include_dirs" : [
         "<!(node -e \"require('nan')\")"
-      ],
+      ]
     },
   ]
 }

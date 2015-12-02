@@ -21,7 +21,8 @@
   "homepage": "https://github.com/51Degreesmobi/51degrees.node",
   "dependencies": {
     "debug": "2.1.0",
-    "nan": "2.0.9"
+    "nan": "2.0.9",
+    "node-gyp": "^3.2.0"
   },
   "devDependencies": {
     "csv": "^0.4.0",

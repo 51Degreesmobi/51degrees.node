@@ -1284,7 +1284,7 @@ void resetNextCharacterPositionIndex(fiftyoneDegreesWorkset *ws) {
 int16_t getNumber(const byte *array, int32_t start, int32_t length) {
     int32_t i, p;
     int16_t value = 0;
-    for (i = start + length - 1, p = 0; i >= start && p < POWERS_COUNT; i--, p++)
+    for (i = start + length - 1, p = 0; i >= start && (unsigned)p < (unsigned)POWERS_COUNT; i--, p++)
     {
         value += POWERS[p] * (array[i] - (byte)'0');
     }
@@ -1326,7 +1326,7 @@ int32_t getCurrentPositionAsNumeric(fiftyoneDegreesWorkset *ws, const fiftyoneDe
  */
 void setRange(fiftyoneDegreesNumericNodeState *state) {
     int32_t index;
-    for(index = 0; index < RANGES_COUNT; index++) {
+    for(index = 0; (unsigned)index < (unsigned)RANGES_COUNT; index++) {
         if (state->target >= RANGES[index].lower &&
             state->target < RANGES[index].upper) {
             state->range = &RANGES[index];
