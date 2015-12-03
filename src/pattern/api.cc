@@ -105,7 +105,7 @@ NAN_METHOD(PatternParser::Parse) {
 
   fiftyoneDegreesWorkset *ws = parser->workSet;
   int maxInputLength = (parser->dataSet->header.maxUserAgentLength + 1) * sizeof(char);
-  if (strlen(*v8_input) > maxInputLength) {
+  if ((unsigned)strlen(*v8_input) > (unsigned)maxInputLength) {
     return Nan::ThrowError("Invalid useragent: too long");
   }
 

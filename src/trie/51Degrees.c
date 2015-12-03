@@ -144,7 +144,7 @@ fiftyoneDegreesDataSetInitStatus readStrings(FILE *inputFilePtr) {
 	_strings = (char*)malloc(_stringsSize);
 	if (_strings == NULL)
         return DATA_SET_INIT_STATUS_INSUFFICIENT_MEMORY;
-	if (fread(_strings, sizeof(BYTE), _stringsSize, inputFilePtr) != _stringsSize)
+	if (fread(_strings, sizeof(BYTE), _stringsSize, inputFilePtr) != (unsigned)_stringsSize)
         return DATA_SET_INIT_STATUS_CORRUPT_DATA;
     return DATA_SET_INIT_STATUS_SUCCESS;
 }
@@ -156,7 +156,7 @@ fiftyoneDegreesDataSetInitStatus readProperties(FILE *inputFilePtr) {
 	_properties = (int32_t*)malloc(_propertiesSize);
 	if (_properties == NULL)
         return DATA_SET_INIT_STATUS_INSUFFICIENT_MEMORY;
-	if (fread(_properties, sizeof(BYTE), _propertiesSize, inputFilePtr) != _propertiesSize)
+	if (fread(_properties, sizeof(BYTE), _propertiesSize, inputFilePtr) != (unsigned)_propertiesSize)
         return DATA_SET_INIT_STATUS_CORRUPT_DATA;
 	_propertiesCount = _propertiesSize / sizeof(int32_t);
 	return DATA_SET_INIT_STATUS_SUCCESS;
@@ -169,7 +169,7 @@ fiftyoneDegreesDataSetInitStatus readDevices(FILE *inputFilePtr) {
 	_devices = (int32_t*)malloc(_devicesSize);
 	if (_devices == NULL)
         return DATA_SET_INIT_STATUS_INSUFFICIENT_MEMORY;
-	if (fread(_devices, sizeof(BYTE), _devicesSize, inputFilePtr) != _devicesSize)
+	if (fread(_devices, sizeof(BYTE), _devicesSize, inputFilePtr) != (unsigned)_devicesSize)
         return DATA_SET_INIT_STATUS_CORRUPT_DATA;
     return DATA_SET_INIT_STATUS_SUCCESS;
 }
@@ -181,7 +181,7 @@ fiftyoneDegreesDataSetInitStatus readLookupList(FILE *inputFilePtr) {
 	_lookupList = (LOOKUP_HEADER*)malloc(_lookupListSize);
 	if (_lookupList ==NULL)
         return DATA_SET_INIT_STATUS_INSUFFICIENT_MEMORY;
-	if (fread(_lookupList, sizeof(BYTE), _lookupListSize, inputFilePtr) != _lookupListSize)
+	if (fread(_lookupList, sizeof(BYTE), _lookupListSize, inputFilePtr) != (unsigned)_lookupListSize)
         return DATA_SET_INIT_STATUS_CORRUPT_DATA;
     return DATA_SET_INIT_STATUS_SUCCESS;
 }
@@ -194,7 +194,7 @@ fiftyoneDegreesDataSetInitStatus readNodes(FILE *inputFilePtr) {
     if (_rootNode == 0)
         return DATA_SET_INIT_STATUS_INSUFFICIENT_MEMORY;
 	if (_rootNode > 0) {
-        if (fread(_rootNode, sizeof(BYTE), _nodesSize, inputFilePtr) != _nodesSize) {
+        if (fread(_rootNode, sizeof(BYTE), _nodesSize, inputFilePtr) != (unsigned)_nodesSize) {
             return DATA_SET_INIT_STATUS_CORRUPT_DATA;
         }
 	}
@@ -209,7 +209,7 @@ fiftyoneDegreesDataSetInitStatus readCopyright(FILE *inputFilePtr) {
 	_copyright = (char*)malloc(_copyrightSize);
 	if (_copyright == NULL)
         return DATA_SET_INIT_STATUS_INSUFFICIENT_MEMORY;
-	if (fread(_copyright, sizeof(BYTE), _copyrightSize, inputFilePtr) != _copyrightSize)
+	if (fread(_copyright, sizeof(BYTE), _copyrightSize, inputFilePtr) != (unsigned)_copyrightSize)
         return DATA_SET_INIT_STATUS_CORRUPT_DATA;
     return DATA_SET_INIT_STATUS_SUCCESS;
 }
@@ -227,8 +227,8 @@ void fiftyoneDegreesDestroy(void) {
 // Reads the version value from the start of the file and returns
 // 0 if the file is in a format that can be read by this code.
 fiftyoneDegreesDataSetInitStatus readVersion(FILE *inputFilePtr) {
-	uint16_t version;
-	if (fread(&version, sizeof(uint16_t), 1, inputFilePtr) != -1) {
+	uint16_t version = 0;
+	if (fread(&version, sizeof(uint16_t), 1, inputFilePtr) != 0) {
 	   if (version != 3)
            return DATA_SET_INIT_STATUS_INCORRECT_VERSION;
        return DATA_SET_INIT_STATUS_SUCCESS;
@@ -296,7 +296,7 @@ fiftyoneDegreesDataSetInitStatus readFile(char* fileName) {
 // Returns the index of the property requested, or -1 if not available.
 int getPropertyIndexRange(char *property, size_t length) {
 	uint32_t i = 0;
-	for(i = 0; i < _propertiesCount; i++) {
+	for(i = 0; i < (unsigned)_propertiesCount; i++) {
 		if(strncmp(
 			_strings + *(_properties + i),
 			property,
@@ -396,7 +396,7 @@ void initAllProperties() {
 	_requiredPropertiesNames = (char**)malloc(_requiredPropertiesCount * sizeof(char**));
 
 	// Add all the available properties.
-	for(i = 0; i < _propertiesCount; i++) {
+	for(i = 0; i < (unsigned)_propertiesCount; i++) {
 		*(_requiredProperties + i) = i;
 		*(_requiredPropertiesNames + i) = _strings + *(_properties + i);
 	}
@@ -435,7 +435,7 @@ fiftyoneDegreesDataSetInitStatus fiftyoneDegreesInitWithPropertyArray(char* file
 // Returns the index of the property requested, or -1 if not available.
 int fiftyoneDegreesGetPropertyIndex(char *value) {
 	uint32_t i = 0;
-	for(i = 0; i < _propertiesCount; i++) {
+	for(i = 0; i < (unsigned)_propertiesCount; i++) {
 		if(strcmp(
 			_strings + *(_properties + i),
 			value) == 0) {
@@ -582,7 +582,7 @@ int fiftyoneDegreesProcessDeviceCSV(int32_t deviceOffset, char* result, int resu
 	}
 
 	// Process each line of data using the relevant value separator. In this case, a pipe.
-	for(i = 0; i < _requiredPropertiesCount; i++) {
+	for(i = 0; i < (unsigned)_requiredPropertiesCount; i++) {
 		// Add the next property to the buffer.
 		currentPos += snprintf(
 			currentPos,
@@ -618,9 +618,7 @@ int fiftyoneDegreesProcessDeviceJSON(int32_t deviceOffset, char* result, int res
 	currentPos += snprintf(currentPos, endPos - currentPos, "{\n");
 
 	// Process each line of data using the relevant value separator. In this case, a pipe.
-	for(i = 0; i < _requiredPropertiesCount; i++) {
-		
-	
+	for(i = 0; i < (unsigned)_requiredPropertiesCount; i++) {
 		// Add the next property to the buffer.
 		currentPos += snprintf(
 			currentPos,
@@ -650,7 +648,7 @@ int fiftyoneDegreesProcessDeviceJSON(int32_t deviceOffset, char* result, int res
 				currentPos,
 				(int)(endPos - currentPos),
 				"\"");
-		if(i + 1 != _requiredPropertiesCount) {
+		if(i + 1 != (unsigned)_requiredPropertiesCount) {
 			currentPos += snprintf(currentPos, endPos - currentPos, ",\n");
 		}
 		// Check to see if buffer is filled in which case return -1.
